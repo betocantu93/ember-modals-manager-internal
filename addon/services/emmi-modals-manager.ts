@@ -1,4 +1,4 @@
-import { set } from '@ember/object';
+import { set, action } from '@ember/object';
 import { assert } from '@ember/debug';
 import Service from '@ember/service';
 import { isArray } from '@ember/array';
@@ -46,6 +46,7 @@ export default class ModalsManager<T> extends Service {
 
   componentName: string | null = null;
 
+  @action
   show(componentName: string, options: EmmiModalOptions): RSVP.Promise<T> {
     assert('Only one modal may be opened in the same time!', !this.modalIsOpened);
     const opts = Object.assign({}, this.defaultOptions, options);
@@ -60,6 +61,7 @@ export default class ModalsManager<T> extends Service {
   /**
    * Shows `alert`-modal
    */
+  @action
   alert(options: EmmiModalOptions): RSVP.Promise<T> {
     return this.show(`${this.modalsContainerPath}/alert`, options);
   }
@@ -67,6 +69,7 @@ export default class ModalsManager<T> extends Service {
   /**
    * Shows `confirm`-modal
    */
+  @action
   confirm(options: EmmiModalOptions): RSVP.Promise<T> {
     return this.show(`${this.modalsContainerPath}/confirm`, options);
   }
@@ -74,6 +77,7 @@ export default class ModalsManager<T> extends Service {
   /**
    * Shows `prompt`-modal
    */
+  @action
   prompt(options: EmmiModalOptions): RSVP.Promise<T> {
     return this.show(`${this.modalsContainerPath}/prompt`, options);
   }
@@ -81,6 +85,7 @@ export default class ModalsManager<T> extends Service {
   /**
    * Shows `prompt-confirm`-modal
    */
+  @action
   promptConfirm(options: EmmiModalOptions): RSVP.Promise<T> {
     assert('"options.promptValue" must be defined and not empty', !!options.promptValue);
     return this.show(`${this.modalsContainerPath}/prompt-confirm`, options);
@@ -89,6 +94,7 @@ export default class ModalsManager<T> extends Service {
   /**
    * Show `check-confirm`-modal
    */
+  @action
   checkConfirm(options: EmmiModalOptions): RSVP.Promise<T> {
     return this.show(`${this.modalsContainerPath}/check-confirm`, options);
   }
@@ -96,22 +102,26 @@ export default class ModalsManager<T> extends Service {
   /**
    * Shows `progress`-modal. This modal doesn't have any controls and is auto-closed when progress is completed
    */
+  @action
   progress(options: EmmiModalOptions): RSVP.Promise<T> {
     assert('`options.promises` must be an array', options && isArray(options.promises));
     return this.show(`${this.modalsContainerPath}/progress`, options);
   }
 
+  @action
   process(options: EmmiModalOptions): RSVP.Promise<T> {
     assert('`options.process` must be defined', options && options.process);
     return this.show(`${this.modalsContainerPath}/process`, options);
   }
 
+  @action
   onConfirmClick(v: EmmiConfirmPayload): void {
     set(this, 'modalIsOpened', false);
     this.modalDefer?.resolve(v);
     this.clearOptions();
   }
 
+  @action
   onDeclineClick(v: EmmiDeclinePayload): void {
     set(this, 'modalIsOpened', false);
     this.modalDefer?.reject(v);
